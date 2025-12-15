@@ -52,6 +52,13 @@ import 'features/schedule/data/datasources/schedule_remote_datasource.dart';
 import 'features/schedule/data/repositories/schedule_repository_impl.dart';
 import 'features/schedule/presentation/bloc/schedule_bloc.dart';
 
+// REST Announcements Feature
+import 'features/rest_announcements/data/datasources/rest_announcements_remote_datasource.dart';
+import 'features/rest_announcements/data/repositories/rest_announcements_repository_impl.dart';
+import 'features/rest_announcements/domain/repositories/rest_announcements_repository.dart';
+import 'features/rest_announcements/domain/usecases/get_rest_announcements_usecase.dart';
+import 'features/rest_announcements/presentation/bloc/rest_announcements_bloc.dart';
+
 final sl = GetIt.instance;
 
 Future<void> init() async {
@@ -97,6 +104,11 @@ Future<void> init() async {
     () => ScheduleBloc(repository: sl()),
   );
 
+  // REST Announcements
+  sl.registerFactory(
+    () => RestAnnouncementsBloc(getRestAnnouncementsUseCase: sl()),
+  );
+
   // Use cases
   sl.registerLazySingleton(() => SignInUseCase(sl()));
   sl.registerLazySingleton(() => SignUpUseCase(sl()));
@@ -104,6 +116,7 @@ Future<void> init() async {
   sl.registerLazySingleton(() => GetCurrentUserUseCase(sl()));
   sl.registerLazySingleton(() => GetAnnouncementsUseCase(sl()));
   sl.registerLazySingleton(() => GetQuoteOfTheDayUseCase(sl()));
+  sl.registerLazySingleton(() => GetRestAnnouncementsUseCase(sl()));
 
   // Repositories
   sl.registerLazySingleton<AuthRepository>(
@@ -131,6 +144,9 @@ Future<void> init() async {
   );
   sl.registerLazySingleton<ScheduleRepository>(
     () => ScheduleRepositoryImpl(remoteDataSource: sl()),
+  );
+  sl.registerLazySingleton<RestAnnouncementsRepository>(
+    () => RestAnnouncementsRepositoryImpl(remoteDataSource: sl()),
   );
 
   // Data sources
@@ -160,6 +176,9 @@ Future<void> init() async {
   );
   sl.registerLazySingleton<ScheduleRemoteDataSource>(
     () => ScheduleRemoteDataSourceImpl(firestore: sl()),
+  );
+  sl.registerLazySingleton<RestAnnouncementsRemoteDataSource>(
+    () => RestAnnouncementsRemoteDataSourceImpl(dio: sl()),
   );
 
   //! Core

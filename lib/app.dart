@@ -7,6 +7,7 @@ import 'features/auth/presentation/pages/login_page.dart';
 import 'features/auth/presentation/pages/register_page.dart';
 import 'features/navigation/main_navigation.dart';
 import 'features/profile/presentation/bloc/theme_bloc.dart';
+import 'features/rest_announcements/presentation/pages/rest_announcements_page.dart';
 
 /// Root widget of the application
 class App extends StatelessWidget {
@@ -33,6 +34,7 @@ class App extends StatelessWidget {
                   child: const RegisterPage(),
                 ),
             AppRoutes.main: (context) => const MainNavigation(),
+            AppRoutes.restAnnouncements: (context) => const RestAnnouncementsPage(),
           },
           onGenerateRoute: (settings) {
             // Handle dynamic routes here

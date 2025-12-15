@@ -11,6 +11,7 @@ class UserModel extends UserEntity {
     super.classId,
     super.photoUrl,
     super.createdAt,
+    super.role,
   });
 
   /// Create UserModel from Firebase User and Firestore document
@@ -22,13 +23,16 @@ class UserModel extends UserEntity {
     return UserModel(
       uid: uid,
       email: email,
-      displayName: firestoreData?['displayName'] as String?,
+      displayName: firestoreData?['displayName'] as String? ?? 
+                   firestoreData?['name'] as String?,
       studentId: firestoreData?['studentId'] as String?,
       classId: firestoreData?['classId'] as String?,
       photoUrl: firestoreData?['photoUrl'] as String?,
       createdAt: firestoreData?['createdAt'] != null
           ? (firestoreData!['createdAt'] as Timestamp).toDate()
           : null,
+      // Parse role from Firestore - defaults to student if not found
+      role: UserRole.fromString(firestoreData?['role'] as String?),
     );
   }
 
@@ -41,6 +45,7 @@ class UserModel extends UserEntity {
       'studentId': studentId,
       'classId': classId,
       'photoUrl': photoUrl,
+      'role': role.name,
       'createdAt': createdAt != null ? Timestamp.fromDate(createdAt!) : FieldValue.serverTimestamp(),
     };
   }
@@ -55,6 +60,7 @@ class UserModel extends UserEntity {
       classId: entity.classId,
       photoUrl: entity.photoUrl,
       createdAt: entity.createdAt,
+      role: entity.role,
     );
   }
 }

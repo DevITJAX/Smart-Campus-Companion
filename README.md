@@ -8,7 +8,7 @@
 
 **Your all-in-one campus companion app**
 
-[Features](#-features) • [Architecture](#-architecture) • [Getting Started](#-getting-started) • [Class Diagram](#-class-diagram)
+[Features](#-features) • [Architecture](#-architecture) • [Getting Started](#-getting-started) • [Test Accounts](#-test-accounts)
 
 </div>
 
@@ -34,6 +34,24 @@
 <td>Dark mode & preferences</td>
 </tr>
 </table>
+
+### 🆕 New Features
+
+| Feature | Description |
+|---------|-------------|
+| 🌐 **REST API Integration** | Fetches announcements from JSONPlaceholder API using Dio with full error handling |
+| 👥 **Role-Based Navigation** | Admin users see an extra "Admin Panel" tab with management options |
+| 💬 **Quote of the Day** | Daily motivational quotes from ZenQuotes API |
+
+---
+
+## 👥 User Roles
+
+| Role | Access |
+|------|--------|
+| **Student** | Home, Schedule, Rooms, Services, Profile (5 tabs) |
+| **Professor** | Same as Student (5 tabs) |
+| **Admin** | All 5 tabs + **Admin Panel** (6 tabs) |
 
 ---
 
@@ -76,6 +94,8 @@ classDiagram
         +String email
         +String displayName
         +String? classId
+        +UserRole role
+        +bool isAdmin
     }
     
     class AnnouncementEntity {
@@ -85,6 +105,13 @@ classDiagram
         +String category
         +DateTime publishedAt
         +bool isPinned
+    }
+
+    class RestAnnouncementEntity {
+        +int id
+        +int userId
+        +String title
+        +String body
     }
     
     class ScheduleClassEntity {
@@ -134,6 +161,11 @@ classDiagram
     class HomeBloc {
         +loadAnnouncements()
     }
+
+    class RestAnnouncementsBloc {
+        +loadAnnouncements()
+        +retry()
+    }
     
     class ScheduleBloc {
         +loadSchedule(classId)
@@ -162,6 +194,11 @@ classDiagram
         <<interface>>
         +getAnnouncements()
     }
+
+    class RestAnnouncementsRepository {
+        <<interface>>
+        +getAnnouncements()
+    }
     
     class ScheduleRepository {
         <<interface>>
@@ -182,12 +219,14 @@ classDiagram
     %% Relationships
     AuthBloc --> AuthRepository
     HomeBloc --> AnnouncementRepository
+    RestAnnouncementsBloc --> RestAnnouncementsRepository
     ScheduleBloc --> ScheduleRepository
     RoomsBloc --> RoomsRepository
     ServicesBloc --> ServicesRepository
     
     AuthRepository ..> UserEntity
     AnnouncementRepository ..> AnnouncementEntity
+    RestAnnouncementsRepository ..> RestAnnouncementEntity
     ScheduleRepository ..> ScheduleClassEntity
     RoomsRepository ..> RoomEntity
     RoomsRepository ..> BuildingEntity
@@ -201,21 +240,26 @@ classDiagram
 ```
 lib/
 ├── core/
-│   ├── constants/      # App constants
+│   ├── constants/      # App constants & routes
 │   ├── errors/         # Exceptions & Failures
-│   ├── routes/         # Navigation
-│   ├── theme/          # App theme
-│   ├── utils/          # Utilities & Seeder
+│   ├── theme/          # App theme (Material 3)
+│   ├── utils/          # Utilities & Network info
 │   └── widgets/        # Shared widgets
 │
 ├── features/
-│   ├── auth/           # 🔐 Authentication
-│   ├── home/           # 📢 Announcements
-│   ├── schedule/       # 📅 Class Schedule
-│   ├── rooms/          # 🏠 Room Availability
-│   ├── services/       # 🛠️ Campus Services
-│   ├── profile/        # ⚙️ Settings
-│   └── navigation/     # Bottom Navigation
+│   ├── auth/               # 🔐 Authentication (Firebase)
+│   ├── home/               # 📢 Announcements (Firebase)
+│   ├── rest_announcements/ # 🌐 REST API Demo (Dio)
+│   ├── schedule/           # 📅 Class Schedule
+│   ├── rooms/              # 🏠 Room Availability
+│   ├── services/           # 🛠️ Campus Services
+│   ├── quotes/             # 💬 Quote of the Day
+│   ├── profile/            # ⚙️ Settings & Theme
+│   ├── admin/              # 🔧 Admin Panel (role-based)
+│   └── navigation/         # Bottom Navigation
+│
+├── scripts/
+│   └── seed_users.dart     # 👥 Create test users
 │
 ├── injection_container.dart
 ├── app.dart
@@ -258,6 +302,26 @@ flutterfire configure
 
 ---
 
+## 👤 Test Accounts
+
+Seed test users with different roles:
+
+```bash
+flutter run -t lib/scripts/seed_users.dart
+```
+
+| Email | Password | Role |
+|-------|----------|------|
+| `student1@campus.edu` | `Student123!` | Student |
+| `student2@campus.edu` | `Student123!` | Student |
+| `student3@campus.edu` | `Student123!` | Student |
+| `professor@campus.edu` | `Professor123!` | Professor |
+| `admin@campus.edu` | `Admin123!` | **Admin** ⭐ |
+
+> **Note**: Only the admin account will see the "Admin" tab in the navigation!
+
+---
+
 ## 🛠️ Tech Stack
 
 | Category | Technology |
@@ -265,10 +329,11 @@ flutterfire configure
 | Framework | Flutter |
 | Language | Dart |
 | Backend | Firebase (Auth + Firestore) |
+| REST API | Dio (JSONPlaceholder demo) |
 | State Management | BLoC / Cubit |
 | Dependency Injection | GetIt |
 | Local Storage | Hive + SharedPreferences |
-| HTTP | Dio |
+| Networking | Dio + Connectivity Plus |
 
 ---
 
@@ -293,6 +358,9 @@ This will add sample announcements, buildings, rooms, services, and schedules.
 - [x] Dark/Light Theme
 - [x] Material 3 Design
 - [x] Offline Support
+- [x] **REST API Integration (Dio)**
+- [x] **Role-Based Navigation**
+- [x] **Error Handling (4xx, 5xx, timeout)**
 
 ---
 
@@ -303,3 +371,4 @@ Made with ❤️ using Flutter
 **[⬆ Back to Top](#-smart-campus-companion)**
 
 </div>
+

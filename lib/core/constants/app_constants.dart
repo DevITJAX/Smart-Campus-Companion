@@ -26,6 +26,7 @@ class AppConstants {
 
   // API URLs
   static const String quotesApiBaseUrl = 'https://zenquotes.io/api';
+  static const String restAnnouncementsApiBaseUrl = 'https://jsonplaceholder.typicode.com';
 }
 
 /// Route names for navigation
@@ -46,4 +47,6 @@ class AppRoutes {
   static const String settings = '/settings';
   static const String announcements = '/announcements';
   static const String announcementDetails = '/announcement-details';
+  static const String restAnnouncements = '/rest-announcements';
 }
+
